@@ -40,4 +40,11 @@ public class Synchronizer
         byte[] hash = md5.ComputeHash(stream);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
+    private void CopyFileWithMetadata(string source, string target)
+    {
+        File.Copy(source, target, overwrite: true);
+        File.SetCreationTimeUtc(target, File.GetCreationTimeUtc(source));
+        File.SetLastWriteTimeUtc(target, File.GetLastWriteTimeUtc(source));
+        File.SetAttributes(target, File.GetAttributes(source));
+    }
 }
