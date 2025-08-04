@@ -1,0 +1,15 @@
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\bin\Debug\net6.0\FileSyncTool.exe
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\bin\Debug\net6.0\FileSyncTool.deps.json
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\bin\Debug\net6.0\FileSyncTool.runtimeconfig.json
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\bin\Debug\net6.0\FileSyncTool.dll
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\bin\Debug\net6.0\FileSyncTool.pdb
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.csproj.AssemblyReference.cache
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.AssemblyInfoInputs.cache
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.AssemblyInfo.cs
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.dll
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\refint\FileSyncTool.dll
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.pdb
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\FileSyncTool.genruntimeconfig.cache
+C:\Users\ASUS\Desktop\Task\file-sync-tool\src\FileSyncTool\obj\Debug\net6.0\ref\FileSyncTool.dll
