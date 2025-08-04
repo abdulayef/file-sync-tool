@@ -1,8 +1,22 @@
 ﻿
 using FileSyncTool.Models;
+using FileSyncTool.Services;
 using FileSyncTool.Utilities;
 using System.Text.Json;
 
+try
+{
+    var (sourcePath, replicaPath, intervalSeconds, logFilePath) = GetConfiguration(args);
+    var syncService = new SyncService(sourcePath, replicaPath, logFilePath, intervalSeconds);
+    syncService.Start();
+}
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"Fatal error: {ex.Message}");
+    Console.ResetColor();
+    Environment.Exit(1);
+}
 
 
 static (string sourcePath, string replicaPath, int intervalSeconds, string logFilePath) GetConfiguration(string[] args)
