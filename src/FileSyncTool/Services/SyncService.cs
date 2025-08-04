@@ -4,6 +4,9 @@ using FileSyncTool.Utilities;
 
 namespace FileSyncTool.Services;
 
+/// <summary>
+/// Service for continuous directory synchronization with interval-based execution and graceful cancellation.
+/// </summary>
 public class SyncService
 {
     private readonly ILogger _logger;
@@ -11,6 +14,10 @@ public class SyncService
     private readonly int _intervalSeconds;
     private CancellationTokenSource _cts = new();
 
+    /// <summary>
+    /// Initializes a new SyncService instance with validation for all paths.
+    /// </summary>
+    /// <exception cref="DirectoryNotFoundException">Thrown if source directory doesn't exist.</exception>
     public SyncService(string sourcePath, string replicaPath, string logFilePath, int intervalSeconds)
     {
         ValidatePaths(sourcePath, replicaPath, logFilePath);
@@ -20,6 +27,11 @@ public class SyncService
         _intervalSeconds = intervalSeconds;
     }
 
+
+    /// <summary>
+    /// Starts continuous synchronization with the configured interval.
+    /// Handles cancellation (Ctrl+C) and logs fatal errors.
+    /// </summary>
     public void Start()
     {
         SetupCancellation();
@@ -34,7 +46,6 @@ public class SyncService
                 }
                 catch (AggregateException ae) when (ae.InnerException is TaskCanceledException)
                 {
-                    // Gracefully handle Ctrl+C during the delay
                     _logger.Info(LogMessages.SyncStoppedByUser);
                     return;
                 }
@@ -51,7 +62,9 @@ public class SyncService
 
     }
 
-
+    /// <summary>
+    /// Triggers graceful shutdown of the synchronization loop.
+    /// </summary>
     public void Stop() => _cts.Cancel();
 
     private void SetupCancellation()
@@ -63,6 +76,9 @@ public class SyncService
         };
     }
 
+    /// <summary>
+    /// Validates paths and ensures required directories exist.
+    /// </summary>
     private static void ValidatePaths(string sourcePath, string replicaPath, string logFilePath)
     {
         if (!Directory.Exists(sourcePath))
