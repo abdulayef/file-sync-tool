@@ -1,6 +1,7 @@
 ﻿
 
 using FileSyncTool.Interfaces;
+using System.Security.Cryptography;
 
 namespace FileSyncTool.Services;
 
@@ -30,6 +31,13 @@ public class Synchronizer
 
     private bool FilesAreEqual(string file1, string file2) 
     {
-        return true;
+        return GetFileHash(file1) == GetFileHash(file2);
+    }
+    private string GetFileHash(string filePath)
+    {
+        using var md5 = MD5.Create();
+        using var stream = File.OpenRead(filePath);
+        byte[] hash = md5.ComputeHash(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }
