@@ -7,6 +7,9 @@ using System.Security.Cryptography;
 
 namespace FileSyncTool.Services;
 
+/// <summary>
+/// Main service handling one-way directory synchronization with retry logic and logging.
+/// </summary>
 public class Synchronizer
 {
 
@@ -14,9 +17,13 @@ public class Synchronizer
     private readonly string _replicaPath;
     private readonly ILogger _logger;
 
+    /// <summary>
+    /// Initializes a new Synchronizer instance with required paths and logger.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown if any parameter is null or empty.</exception>
     public Synchronizer(string sourcePath, string replicaPath, ILogger logger)
     {
-        //validation
+        //Input validation
         if (string.IsNullOrWhiteSpace(sourcePath))
             throw new ArgumentNullException(nameof(sourcePath));
         if (string.IsNullOrWhiteSpace(replicaPath))
@@ -29,7 +36,9 @@ public class Synchronizer
         _logger = logger;
     }
 
-
+    /// <summary>
+    /// Main synchronization entry point with performance tracking.
+    /// </summary>
     public void Run()
     {
         var stopwatch = Stopwatch.StartNew();
@@ -47,6 +56,9 @@ public class Synchronizer
         }
     }
 
+    /// <summary>
+    /// Recursively synchronizes directories with error handling.
+    /// </summary>
     private void SyncDirectories(string sourceDir, string replicaDir)
     {
         try
@@ -58,7 +70,6 @@ public class Synchronizer
                 _logger.Info(string.Format(LogMessages.DirCreated, replicaDir));
             }
 
-            // Copy and update files
             foreach (var sourceFile in Directory.GetFiles(sourceDir))
             {
                 string fileName = Path.GetFileName(sourceFile);
@@ -79,7 +90,7 @@ public class Synchronizer
                 }
             }
 
-            // Recursively sync subdirectories
+            // Process subdirectories recursively
             foreach (var sourceSubDir in Directory.GetDirectories(sourceDir))
             {
                 string dirName = Path.GetFileName(sourceSubDir);
@@ -88,20 +99,23 @@ public class Synchronizer
                 SyncDirectories(sourceSubDir, replicaSubDir);
             }
 
-            // Delete files and folders not in source
+            // Cleanup orphaned files
             DeleteOrphans(sourceDir, replicaDir);
         }
         catch (Exception ex)
         {
             _logger.Info(string.Format(LogMessages.FatalSyncError, ex.Message));
-            throw; // Re-throw to allow caller to handle
+            throw; // Critical error - abort synchronization
         }
 
     }
 
+    /// <summary>
+    /// Deletes files/folders in replica that don't exist in source.
+    /// </summary>
     private void DeleteOrphans(string sourceDir, string replicaDir)
-    {        
-        // Delete extra files
+    {
+        // Delete orphaned files
         foreach (var replicaFile in Directory.GetFiles(replicaDir))
         {
             string fileName = Path.GetFileName(replicaFile);
@@ -117,7 +131,7 @@ public class Synchronizer
             }
         }
 
-        // Delete extra folders
+        
         foreach (var replicaSubDir in Directory.GetDirectories(replicaDir))
         {
             string dirName = Path.GetFileName(replicaSubDir);
@@ -130,16 +144,23 @@ public class Synchronizer
             }
             else
             {
-                // Recursively check for orphaned files/folders
+                // Recursive cleanup
                 DeleteOrphans(sourceSubDir, replicaSubDir);
             }
         }
     }
 
+    /// <summary>
+    /// Compares files using MD5 hash (safe but slow for large files).
+    /// </summary>
     private bool FilesAreEqual(string file1, string file2) 
     {
         return GetFileHash(file1) == GetFileHash(file2);
     }
+
+    /// <summary>
+    /// Generates MD5 hash for file content comparison.
+    /// </summary>
     private string GetFileHash(string filePath)
     {
         using var md5 = MD5.Create();
@@ -147,6 +168,10 @@ public class Synchronizer
         byte[] hash = md5.ComputeHash(stream);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
+
+    /// <summary>
+    /// Copies file while preserving metadata (timestamps, attributes).
+    /// </summary>
     private void CopyFileWithMetadata(string source, string target)
     {
         File.Copy(source, target, overwrite: true);
@@ -155,6 +180,15 @@ public class Synchronizer
         File.SetAttributes(target, File.GetAttributes(source));
     }
 
+
+    /// <summary>
+    /// Executes an action with exponential backoff retry for IO operations.
+    /// </summary>
+    /// <param name="action">Action to execute</param>
+    /// <param name="operationName">Name for logging</param>
+    /// <param name="maxRetries">Maximum retry attempts (default: 3)</param>
+    /// <param name="baseDelayMs">Initial delay in milliseconds (default: 100ms)</param>
+    /// <exception cref="AggregateException">Thrown if all retries fail</exception>
     private void ExecuteWithRetry(Action action, string operationName, int maxRetries = 3, int baseDelayMs = 100)
     {
         int attempt = 0;
