@@ -1,0 +1,6 @@
+﻿{
+  "SourcePath": "C:\\Source",
+  "ReplicaPath": "C:\\Replica",
+  "IntervalInSeconds": 10,
+  "LogFilePath": "C:\\Logs\\log.txt"
+}
